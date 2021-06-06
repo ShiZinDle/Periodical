@@ -1,7 +1,7 @@
 from abc import ABC
 import json
 from random import shuffle
-from typing import List, Optional, Tuple
+from typing import Any, List, Optional, Tuple
 
 from periodical.card import Card
 
@@ -32,6 +32,9 @@ class Deck(ABC):
 
     def __len__(self) -> int:
         return len(self._cards)
+
+    def __eq__(self, other: Any) -> bool:
+        return sorted(self._cards) == sorted(other._cards)
 
     def draw(self) -> Optional[Card]:
         try:

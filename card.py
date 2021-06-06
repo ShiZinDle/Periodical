@@ -34,5 +34,8 @@ class Card:
                 and self.mass == other.mass
                 and self.category == other.category)
 
-    def __gt__(self, other) -> bool:
+    def __gt__(self, other: Any) -> bool:
         return self.number > other.number
+
+    def compare(self, number: int) -> bool:
+        return self.number == number

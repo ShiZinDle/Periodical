@@ -1,12 +1,5 @@
 from periodical.game import Game
 
-# from starting_deck import StartingDeck
-
-# deck = StartingDeck()
-# deck.shuffle()
-# print(deck.draw())
-# print()a
-# print(deck.draw())
 
 if __name__ == '__main__':
     game = Game('bob' , 'ross', 'steve', 'jeff')

@@ -1,5 +1,8 @@
 from typing import Any, Dict, List
 
+import pygame
+from pygame.locals import *
+
 from periodical.card import Card
 from periodical.decks import Deck, StartingDeck
 
@@ -24,31 +27,31 @@ class Player:
     def __str__(self) -> str:
         return self.name
 
-    def _show(self, zone: List[Card]) -> str:
+    def _print(self, zone: List[Card]) -> str:
         return '\n'.join(map(str, sorted(zone)))
 
     def _get(self, zone: List[Card]) -> Dict[int, Card]:
         return {card.number: card for card in zone}
 
-    def show_discard(self) -> str:
-        return self._show(self._discard)
+    def print_discard(self) -> str:
+        return self._print(self._discard)
 
     def get_discard(self) -> List[Card]:
         return self._get(self._discard)
 
-    def show_hand(self) -> str:
-        return self._show(self._hand)
+    def print_hand(self) -> str:
+        return self._print(self._hand)
 
     def get_hand(self) -> List[Card]:
         return self._get(self._hand)
 
-    def show_table(self) -> str:
-        return self._show(self._table)
+    def print_table(self) -> str:
+        return self._print(self._table)
 
-    def show_lab(self) -> str:
-        return self._show(self._lab)
+    def print_lab(self) -> str:
+        return self._print(self._lab)
 
-    def show_energy(self) -> int:
+    def print_energy(self) -> int:
         return self._energy
 
     def _draw(self) -> Card:
@@ -103,3 +106,18 @@ class Player:
         self._energy = 0
         self._discard.append(card)
         return True
+
+    def show_hand(self) -> pygame.Surface:
+        size = _, height = 650, 150
+        location = left = 25    
+
+        hand = pygame.Surface(size).convert()
+        hand.fill((92, 0, 92))
+
+        for card in sorted(self.get_hand().values()):
+            card_img = card.render()
+            hand.blit(card_img,
+                      (location, (height - card_img.get_height()) / 2))
+            location += card_img.get_width() + left
+
+        return hand

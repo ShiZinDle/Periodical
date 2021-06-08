@@ -1,6 +1,9 @@
 from random import choice
 from typing import Dict, List, Tuple, Union
 
+import pygame
+from pygame.locals import *
+
 from periodical.card import Card
 from periodical.decks import CARDS, Deck, HeavyDeck, LightDeck
 from periodical.player import Player
@@ -81,7 +84,7 @@ class Game:
             self.players.index(self.current_player) - 1]
         self._fill_all_markets()
 
-    def show_board(self) -> str:
+    def show_markets(self) -> str:
         message = ''
         for name, market in (('general market', self.general_market),
                            ('light market', self.light_market),
@@ -113,3 +116,44 @@ class Game:
             return False
         if self.current_player.buy_card(card):
             return self.find_card(number, remove=True)
+
+    def show_board(self) -> None:
+        size = width, height =  1000, 600
+        hand = (175, 450)
+
+        pygame.init()
+        screen = pygame.display.set_mode(size)
+        screen.fill((250, 250, 250))
+        pygame.display.set_caption('Periodical')
+
+        while True:
+            for event in pygame.event.get():
+                if (event.type == QUIT
+                    or event.type == KEYDOWN
+                    and event.key == K_ESCAPE):
+                    return
+
+            hand = self.current_player.show_hand()
+            screen.blit(hand, ((width - hand.get_width()) / 2,
+                               height - hand.get_height()))
+            pygame.display.flip()
+
+
+
+        # screen = pygame.display.set_mode((1500, 350))
+        # screen.fill((250, 250, 250))
+        # pygame.display.set_caption(f'{self.current_player.name}\'s Hand')
+
+        # while True:
+        #     for event in pygame.event.get():
+        #         if (event.type == QUIT
+        #             or event.type == KEYDOWN
+        #             and event.key == K_ESCAPE):
+        #             return
+
+        #     width = 25
+        #     for card in sorted(self.current_player.get_hand().values()):
+        #         card_img = card.render()
+        #         screen.blit(card_img, (width, 25))
+        #         width += card_img.get_width() + 50
+        #     pygame.display.flip()

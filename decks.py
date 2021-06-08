@@ -4,9 +4,7 @@ from random import shuffle
 from typing import Any, List, Optional, Tuple
 
 from periodical.card import Card
-
-
-ELEMENTS_AMOUNT = 118
+from periodical.config import *
 
 
 def get_cards(path: str) -> List[Card]:
@@ -19,7 +17,8 @@ def get_cards(path: str) -> List[Card]:
              if element['number'] <= ELEMENTS_AMOUNT]
     return cards
 
-CARDS = get_cards('D:\\Yuval\\Game Design\\Periodic Table Game\\Source Material\\elements.json')
+
+CARDS = get_cards(PATH)
 
 
 class Deck(ABC):
@@ -48,7 +47,17 @@ class Deck(ABC):
 
 class StartingDeck(Deck):
     def __init__(self, **kwargs) -> None:
-        super().__init__(*CARDS[:10], **kwargs)
+        # super().__init__(*CARDS[:10], **kwargs)
+        super().__init__(*[CARDS[0],
+                          CARDS[1],
+                          CARDS[2],
+                          CARDS[3],
+                          CARDS[4],
+                          CARDS[12],
+                          CARDS[20],
+                          CARDS[56],
+                          CARDS[88],
+                          CARDS[108]], **kwargs)
 
 
 class LightDeck(Deck):

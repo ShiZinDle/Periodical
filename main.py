@@ -3,4 +3,4 @@ if __name__ == '__main__':
     
     game = Game('p')
     game.start()
-    game.show_board()
+    # game.show_board()

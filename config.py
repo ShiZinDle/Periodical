@@ -1,7 +1,21 @@
 from enum import Enum
-from typing import Any, Dict, Tuple
+from typing import Any, List, Tuple, Union
 
+from pygame.rect import Rect
+from pygame.surface import Surface
+
+NUM = Union[int, float]
+CARD_IMG = List[Tuple[Surface, Rect]]
+
+MIN_PLAYER_AMOUNT = 1
 ELEMENTS_AMOUNT = 118
+LIGHT_AMOUNT = 4
+HEAVY_AMOUNT = 2
+LIGHT_START = 3
+LIGHT_END = 18
+GENERAL_END = 2
+LIGHT_DECK_LIMIT = 3
+HEAVY_DECK_LIMIT = 5
 PATH = 'D:\\Yuval\\Game Design\\Periodical\\Source Material\\elements.json'
 COLORS = {
     'Reactive Nonmetal': (8, 163, 21),
@@ -27,48 +41,52 @@ COLORS = {
 
 
 class Size:
-    def __init__(self, width: int, height: int, *args: Tuple[Any],
-                 **kwargs: Dict[str, Any]) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, width: Union[int, float], height: Union[int, float],
+                 **kwargs: Any) -> None:
+        super().__init__(**kwargs)  # type: ignore
         self.width = width
         self.height = height
         self.size = width, height
 
 
 class Pos:
-    def __init__(self, x: int, y: int, *args: Tuple[Any], **kwargs: Dict[str, Any]) -> None:
-        super().__init__(*args, **kwargs)
+    def __init__(self, x: Union[int, float], y: Union[int, float],
+                 **kwargs: Any) -> None:
+        super().__init__(**kwargs)  # type: ignore
         self.x = x
         self.y = y
         self.pos = x, y
 
 
 class Board(Size, Pos):
-    def __init__(self, width: int, height: int, x: int, y: int) -> None:
-        super().__init__(width, height, x, y)
+    pass
 
 
-SCREEN = Size(1000, 1000)
+SCREEN = Size(width=1000, height=1000)
 center_width = 650
 button_area_height = 100
 center_height = (SCREEN.height - button_area_height) / 3
 side_width = (SCREEN.width - center_width) / 2
-DISCARD = Board(side_width, SCREEN.height, 0, 0)
-MARKET = Board(center_width, center_height, DISCARD.width, 0)
-TABLE = Board(center_width, center_height, DISCARD.width, center_height)
-HAND = Board(center_width, center_height, DISCARD.width, center_height * 2)
-LAB = Board(side_width, SCREEN.height, SCREEN.width - side_width, 0)
-BUTTON_AREA = Board(center_width, button_area_height,
-                    DISCARD.width, SCREEN.height - button_area_height)
+DISCARD = Board(width=side_width, height=SCREEN.height, x=0, y=0)
+TABLE = Board(width=center_width, height=center_height, x=DISCARD.width, y=0)
+MARKET = Board(width=center_width, height=center_height,
+               x=DISCARD.width, y=center_height)
+HAND = Board(width=center_width, height=center_height,
+             x=DISCARD.width, y=center_height * 2)
+LAB = Board(width=side_width, height=SCREEN.height,
+            x=SCREEN.width - side_width, y=0)
+BUTTON_AREA = Board(width=center_width, height=button_area_height,
+                    x=DISCARD.width, y=SCREEN.height - button_area_height)
 
-CARD = Size(100, 125)
+CARD = Size(width=100, height=125)
 SYMBOL_HEIGHT = 30
-BUTTON = Size(200, 50)
+BUTTON = Size(width=200, height=50)
 button_height = SCREEN.height - 50
-button_width =  12.5
-ENERGY = Pos(LAB.x - BUTTON.width / 2 - button_width, button_height)
-END_TURN = Pos(DISCARD.width + BUTTON.width / 2 + button_width, button_height)
-MULLIGAN = Pos(END_TURN.x + BUTTON.width + button_width, button_height)
+button_width = 12.5
+ENERGY = Pos(x=LAB.x - BUTTON.width / 2 - button_width, y=button_height)
+END_TURN = Pos(x=DISCARD.width + BUTTON.width / 2 + button_width,
+               y=button_height)
+MULLIGAN = Pos(x=END_TURN.x + BUTTON.width + button_width, y=button_height)
 
 BUTTON_BORDER = 5
 CARD_BORDER = 3

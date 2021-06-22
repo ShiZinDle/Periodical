@@ -1,6 +1,7 @@
+from periodical.game import Game
+
+
 if __name__ == '__main__':
-    from periodical.game import Game
-    
-    game = Game('p')
+
+    game = Game('player')
     game.start()
-    # game.show_board()

@@ -1,12 +1,11 @@
 import json
 from typing import Any, Dict, List, Optional, Tuple
 
-from pygame.font import Font
 from pygame.surface import Surface
 
 from periodical.card import border_and_fill, Card
-from periodical.config import (BUTTON, BUTTON_BORDER, CARD, ELEMENTS_AMOUNT,
-                               NUM, PATH, Pos, Zone)
+from periodical.config import (BLACK_FONT, BUTTON, BUTTON_BORDER, CARD,
+                               ELEMENTS_AMOUNT, FONT, NUM, PATH, Pos, Zone)
 
 
 def create_cards(elements: List[Dict[str, Any]],
@@ -95,7 +94,7 @@ def calc_surface_heights(height: NUM) -> Tuple[NUM, NUM]:
     '''return y pos of top and bottom card rows for a game zone.
 
     Args:
-        height: Board height to calculate rows for.
+        height: Board height to calculate row positions for.
 
     Returns:
         Position of top and bottom row in the game zone.
@@ -114,8 +113,7 @@ def show_button(screen: Surface, text: str, pos: Pos, name: str) -> None:
         name: Name of button for coloring purposes.
     '''
     button = border_and_fill(BUTTON_BORDER, BUTTON, name)
-    font = Font(None, 36)
-    title = font.render(text, True, (10, 10, 10))
+    title = FONT.render(text, *BLACK_FONT)
     button_pos = button.get_rect(center=pos.pos)
     title_pos = title.get_rect(center=button_pos.center)
     for surface, position in ((button, button_pos), (title, title_pos)):

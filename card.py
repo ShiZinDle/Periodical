@@ -1,9 +1,8 @@
-from pygame.font import Font
 from pygame.rect import Rect
 from pygame.surface import Surface
 
-from periodical.config import (CARD, CARD_BORDER, COLORS, Size, SYMBOL_HEIGHT,
-                               Zone)
+from periodical.config import (BLACK_FONT, CARD, CARD_BORDER, COLORS, FONT,
+                               Size, WHITE_FONT, Zone)
 
 
 class Card:
@@ -43,24 +42,21 @@ class Card:
     def render(self) -> None:
         '''Create an image of the card for pygame visualization.'''
         self.rect = Rect((0, 0), CARD.size)
-        top = 15
         card = border_and_fill(CARD_BORDER, CARD, self.category)
-
-        font = Font(None, 42)
-        black_font = (True, (10, 10, 10))
-        white_font = (True, (245, 245, 245))
 
         center = card.get_rect().center
         centerx = card.get_rect().centerx
 
-        symbol = font.render(self.symbol, *black_font)
+        symbol = FONT.render(self.symbol, *BLACK_FONT)
         symbol_pos = symbol.get_rect(center=center)
-        number = font.render(str(self.number), *black_font)
+        number = FONT.render(str(self.number), *BLACK_FONT)
         number_pos = number.get_rect(
-            centerx=centerx, top=SYMBOL_HEIGHT - top)
-        mass = font.render(str(self.mass), *white_font)
-        mass_pos = mass.get_rect(centerx=centerx,
-                                 top=CARD.height - (SYMBOL_HEIGHT + top))
+            centerx=centerx, centery=symbol_pos.top / 1.5)
+        # centerx=centerx, top=symbol_pos. - top)
+        mass = FONT.render(str(self.mass), *WHITE_FONT)
+        mass_pos = mass.get_rect(
+            centerx=centerx, centery=(CARD.height - symbol_pos.bottom) * 2)
+        # centerx=centerx, top=CARD.height - (SYMBOL_HEIGHT + top))
 
         for obj, pos in ((number, number_pos), (mass, mass_pos),
                          (symbol, symbol_pos)):

@@ -1,14 +1,13 @@
 from typing import List, Optional
+from utils import calc_surface_heights
 
 from pygame.surface import Surface
 
 from periodical.card import Card
 from periodical.config import (Board, CARD, CARD_IMG, DISCARD, END_TURN,
-                               ENERGY, HAND, LAB, MULLIGAN, NUM, SYMBOL_HEIGHT,
-                               TABLE, Zone)
+                               ENERGY, HAND, LAB, NUM, SPACE, TABLE, Zone)
 from periodical.decks import Deck, StartingDeck
-from periodical.utils import (calc_surface_heights, interact_with, move_zone,
-                              show_button)
+from periodical.utils import interact_with, move_zone, show_button
 
 
 class Player:
@@ -241,37 +240,6 @@ class Player:
         card.zone = Zone.TABLE
         return True
 
-    def _show_horizontal(self, zone: List[Card],
-                         board: Board) -> CARD_IMG:
-        '''Return list of card image and location tuples to be printed on the
-        screen.
-
-        Used for horizontal boards.
-
-        Args:
-            zone: Game zone to be printed.
-            board: Board the cards will be printed on.
-
-        Returns:
-            List of card image and location tuples to be printed.'''
-        cards = []
-        left = 25
-        location: NUM = left
-
-        height, bottom_height = calc_surface_heights(board.height)
-
-        for i, card in enumerate(sorted(zone)):
-            if i == 5:
-                location = left
-                height = bottom_height
-            card.render()
-            card.rect.update((board.x + location,
-                              board.y + height), CARD.size)
-            cards.append((card.img, card.rect))
-            location += CARD.width + left
-
-        return cards
-
     def _show_vertical(self, zone: List[Card],
                        board: Board) -> CARD_IMG:
         '''Return list of card image and location tuples to be printed on the
@@ -300,17 +268,68 @@ class Player:
             card.rect.update((board.x + width,
                               board.y + location), CARD.size)
             cards.append((card.img, card.rect))
-            location += SYMBOL_HEIGHT + top
+            location += CARD.height / 4 + top
 
         return cards
 
+    # def _show_horizontal(self, zone: List[Card],
+    #                      board: Board) -> CARD_IMG:
+        # '''Return list of card image and location tuples to be printed on the
+        # screen.
+
+        # Used for horizontal boards.
+
+        # Args:
+        #     zone: Game zone to be printed.
+        #     board: Board the cards will be printed on.
+
+        # Returns:
+        #     List of card image and location tuples to be printed.'''
+        # cards = []
+        # location: NUM = SPACE
+
+        # height, bottom_height = calc_surface_heights(board.height)
+
+        # for i, card in enumerate(sorted(zone)):
+        #     if i == 5:
+        #         height = bottom_height
+        #     card.render()
+        #     card.rect.update((board.x + location,
+        #                       board.y + height), CARD.size)
+        #     cards.append((card.img, card.rect))
+        #     location += CARD.width + SPACE
+
+        # return cards
+
+    # def show_hand(self) -> CARD_IMG:
+    #     '''Return visualization of cards in player's hand for printing to the
+    #     screen.
+
+    #     Returns:
+    #         Visualization of cards to be printed.'''
+    #     return self._show_horizontal(self._hand, HAND)
+
     def show_hand(self) -> CARD_IMG:
-        '''Return visualization of cards in player's hand for printing to the
-        screen.
+        '''Return visualization of cards played during the current turn for
+        printing to the screen.
 
         Returns:
             Visualization of cards to be printed.'''
-        return self._show_horizontal(self._hand, HAND)
+        cards = []
+        location: NUM = SPACE
+
+        height, bottom_height = calc_surface_heights(HAND.height)
+
+        for i, card in enumerate(sorted(self._hand)):
+            if i == 5:
+                height = bottom_height
+            card.render()
+            card.rect.update((HAND.x + location,
+                              HAND.y + height), CARD.size)
+            cards.append((card.img, card.rect))
+            location += CARD.width + SPACE
+
+        return cards
 
     def show_table(self) -> CARD_IMG:
         '''Return visualization of cards played during the current turn for
@@ -318,7 +337,7 @@ class Player:
 
         Returns:
             Visualization of cards to be printed.'''
-        return self._show_horizontal(self._table, TABLE)
+        return self._show_vertical(self._table, TABLE)
 
     def show_discard(self) -> CARD_IMG:
         '''Return visualization of cards in player's discard for printing to
@@ -343,9 +362,10 @@ class Player:
             screen: Surface object onto which to paste images.'''
         show_button(screen, 'End Turn', END_TURN, 'end_turn')
         if self.can_mulligan():
-            show_button(screen, 'Mulligan', MULLIGAN, 'mulligan')
-        show_button(screen, f'Energy: {self._energy}',
-                            ENERGY, 'energy')
+            show_button(screen, 'Mulligan', ENERGY, 'mulligan')
+        else:
+            show_button(screen, f'Energy: {self._energy}',
+                                ENERGY, 'energy')
 
     def interact_with_hand(self, card: Card, add: bool = False) -> None:
         '''Add or remove card from hand.

@@ -1,3 +1,4 @@
+from config import ENERGY
 from random import choice
 from typing import Callable, Dict, List, Optional, Tuple
 
@@ -11,8 +12,8 @@ from periodical.config import (BUTTON, BUTTON_AREA, Board, CARD, CARD_IMG,
                                COLORS, DISCARD, END_TURN, GENERAL_END, HAND,
                                HEAVY_AMOUNT, HEAVY_DECK_LIMIT, LAB,
                                LIGHT_AMOUNT, LIGHT_DECK_LIMIT, LIGHT_END,
-                               LIGHT_START, MARKET, MIN_PLAYER_AMOUNT,
-                               MULLIGAN, NUM, SCREEN, TABLE, Zone)
+                               LIGHT_START, MARKET, MIN_PLAYER_AMOUNT, NUM,
+                               SCREEN, SPACE, TABLE, Zone)
 from periodical.decks import Deck, MarketDeck
 from periodical.player import Player
 from periodical.utils import (calc_surface_heights, generate_cards,
@@ -173,8 +174,7 @@ class Game:
     def show_market(self) -> CARD_IMG:
         '''Create an image of the market to be displayed on the screen.'''
         cards = []
-        left = 25
-        location: NUM = left
+        location: NUM = SPACE
 
         top = sorted(self.general_market + self.light_market)
         bottom = sorted(self.heavy_market)
@@ -185,8 +185,8 @@ class Game:
                 card.rect.update((MARKET.x + location,
                                   MARKET.y + height), CARD.size)
                 cards.append((card.img, card.rect))
-                location += CARD.width + left
-            location = left
+                location += CARD.width + SPACE
+            location = SPACE
 
         return cards
 
@@ -224,7 +224,7 @@ class Game:
             pos: Mouse position.
         '''
         rect = Rect((0, 0), BUTTON.size)
-        rect.center = MULLIGAN.pos  # type: ignore
+        rect.center = ENERGY.pos  # type: ignore
         if self.current_player.can_mulligan() and rect.collidepoint(*pos):
             self.current_player.mulligan()
         else:
@@ -298,7 +298,6 @@ class Game:
     def show_board(self) -> None:
         '''Create a visualization of the game and display it.'''
         self.update_zones()
-        pygame.init()
         screen = pygame.display.set_mode(SCREEN.size)  # type: ignore
         pygame.display.set_caption('Periodical')
 

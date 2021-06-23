@@ -1,8 +1,12 @@
 from enum import Enum
 from typing import Any, List, Tuple, Union
 
+import pygame
+from pygame.font import Font
 from pygame.rect import Rect
 from pygame.surface import Surface
+
+pygame.init()
 
 NUM = Union[int, float]
 CARD_IMG = List[Tuple[Surface, Rect]]
@@ -62,34 +66,59 @@ class Board(Size, Pos):
     pass
 
 
-SCREEN = Size(width=1000, height=1000)
-center_width = 650
+CARD = Size(width=75, height=100)
+SPACE = CARD.width / 5
+main_width = int(CARD.width * 5 + SPACE * 6)
+# main_height = int(CARD.height + SPACE * 2)
+main_height = int(CARD.height * 2 + SPACE * 3)
+side_width = int(CARD.height + SPACE * 2)
 button_area_height = 100
-center_height = (SCREEN.height - button_area_height) / 3
-side_width = (SCREEN.width - center_width) / 2
-DISCARD = Board(width=side_width, height=SCREEN.height, x=0, y=0)
-TABLE = Board(width=center_width, height=center_height, x=DISCARD.width, y=0)
-MARKET = Board(width=center_width, height=center_height,
-               x=DISCARD.width, y=center_height)
-HAND = Board(width=center_width, height=center_height,
-             x=DISCARD.width, y=center_height * 2)
-LAB = Board(width=side_width, height=SCREEN.height,
-            x=SCREEN.width - side_width, y=0)
-BUTTON_AREA = Board(width=center_width, height=button_area_height,
-                    x=DISCARD.width, y=SCREEN.height - button_area_height)
+SCREEN = Size(width=main_width + side_width * 3,
+              height=main_height * 2 + button_area_height)
+#   height=main_height * 2 + market_height + button_area_height)
+LAB = Board(width=side_width, height=SCREEN.height, x=0, y=0)
+MARKET = Board(width=main_width, height=main_height,
+               x=side_width, y=0)
+HAND = Board(width=main_width, height=main_height,
+             x=side_width, y=main_height)
+TABLE = Board(width=side_width, height=SCREEN.height,
+              x=main_width + side_width, y=0)
+DISCARD = Board(width=side_width, height=SCREEN.height,
+                x=main_width + side_width * 2, y=0)
+BUTTON_AREA = Board(width=main_width, height=button_area_height,
+                    x=side_width, y=SCREEN.height - button_area_height)
 
-CARD = Size(width=100, height=125)
-SYMBOL_HEIGHT = 30
+
+# SCREEN = Size(width=1000, height=1000)
+# center_width = 650
+# button_area_height = 100
+# center_height = (SCREEN.height - button_area_height) / 3
+# side_width = (SCREEN.width - center_width) / 2
+# DISCARD = Board(width=side_width, height=SCREEN.height, x=0, y=0)
+# TABLE = Board(width=center_width, height=center_height, x=DISCARD.width, y=0)
+# MARKET = Board(width=center_width, height=center_height,
+#                x=DISCARD.width, y=center_height)
+# HAND = Board(width=center_width, height=center_height,
+#              x=DISCARD.width, y=center_height * 2)
+# LAB = Board(width=side_width, height=SCREEN.height,
+#             x=SCREEN.width - side_width, y=0)
+# BUTTON_AREA = Board(width=center_width, height=button_area_height,
+#                     x=DISCARD.width, y=SCREEN.height - button_area_height)
+
 BUTTON = Size(width=200, height=50)
 button_height = SCREEN.height - 50
-button_width = 12.5
-ENERGY = Pos(x=LAB.x - BUTTON.width / 2 - button_width, y=button_height)
-END_TURN = Pos(x=DISCARD.width + BUTTON.width / 2 + button_width,
+button_space = 12.5
+ENERGY = Pos(x=side_width + main_width - BUTTON.width / 2 - button_space,
+             y=button_height)
+END_TURN = Pos(x=side_width + BUTTON.width / 2 + button_space,
                y=button_height)
-MULLIGAN = Pos(x=END_TURN.x + BUTTON.width + button_width, y=button_height)
 
 BUTTON_BORDER = 5
 CARD_BORDER = 3
+
+FONT = Font(None, 36)
+BLACK_FONT = (True, (10, 10, 10))
+WHITE_FONT = (True, (245, 245, 245))
 
 
 class Zone(Enum):

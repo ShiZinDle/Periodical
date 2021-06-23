@@ -272,43 +272,6 @@ class Player:
 
         return cards
 
-    # def _show_horizontal(self, zone: List[Card],
-    #                      board: Board) -> CARD_IMG:
-        # '''Return list of card image and location tuples to be printed on the
-        # screen.
-
-        # Used for horizontal boards.
-
-        # Args:
-        #     zone: Game zone to be printed.
-        #     board: Board the cards will be printed on.
-
-        # Returns:
-        #     List of card image and location tuples to be printed.'''
-        # cards = []
-        # location: NUM = SPACE
-
-        # height, bottom_height = calc_surface_heights(board.height)
-
-        # for i, card in enumerate(sorted(zone)):
-        #     if i == 5:
-        #         height = bottom_height
-        #     card.render()
-        #     card.rect.update((board.x + location,
-        #                       board.y + height), CARD.size)
-        #     cards.append((card.img, card.rect))
-        #     location += CARD.width + SPACE
-
-        # return cards
-
-    # def show_hand(self) -> CARD_IMG:
-    #     '''Return visualization of cards in player's hand for printing to the
-    #     screen.
-
-    #     Returns:
-    #         Visualization of cards to be printed.'''
-    #     return self._show_horizontal(self._hand, HAND)
-
     def show_hand(self) -> CARD_IMG:
         '''Return visualization of cards played during the current turn for
         printing to the screen.
@@ -318,7 +281,9 @@ class Player:
         cards = []
         location: NUM = SPACE
 
-        height, bottom_height = calc_surface_heights(HAND.height)
+        height = HAND.height / 2 - CARD.height / 2
+        if len(self._hand) > 5:
+            height, bottom_height = calc_surface_heights(HAND.height)
 
         for i, card in enumerate(sorted(self._hand)):
             if i == 5:

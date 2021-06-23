@@ -302,7 +302,6 @@ class Game:
         pygame.display.set_caption('Periodical')
 
         card = None
-        # drag = False
         while True:
             for event in pygame.event.get():
                 if (event.type == QUIT or event.type == KEYDOWN
@@ -313,7 +312,6 @@ class Game:
                     if event.button == 1:
                         card = self._get_card_collision(event.pos)
                         if card:
-                            # drag = True
                             mouse_x, mouse_y = event.pos
                             offset_x = card.rect.x - mouse_x
                             offset_y = card.rect.y - mouse_y
@@ -323,7 +321,6 @@ class Game:
 
                 elif event.type == pygame.MOUSEBUTTONUP:
                     if event.button == 1:
-                        # drag = False
                         if card:
                             self._validate_drag(pygame.mouse.get_pos(), card)
 

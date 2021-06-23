@@ -52,11 +52,9 @@ class Card:
         number = FONT.render(str(self.number), *BLACK_FONT)
         number_pos = number.get_rect(
             centerx=centerx, centery=symbol_pos.top / 1.5)
-        # centerx=centerx, top=symbol_pos. - top)
         mass = FONT.render(str(self.mass), *WHITE_FONT)
         mass_pos = mass.get_rect(
             centerx=centerx, centery=(CARD.height - symbol_pos.bottom) * 2)
-        # centerx=centerx, top=CARD.height - (SYMBOL_HEIGHT + top))
 
         for obj, pos in ((number, number_pos), (mass, mass_pos),
                          (symbol, symbol_pos)):

@@ -112,7 +112,7 @@ def show_button(screen: Surface, text: str, pos: Pos, name: str) -> None:
         pos: Button's position on the screen.
         name: Name of button for coloring purposes.
     '''
-    button = border_and_fill(BUTTON_BORDER, BUTTON, name)
+    button = border_and_fill(BUTTON, name, BUTTON_BORDER)
     title = FONT.render(text, *BLACK_FONT)
     button_pos = button.get_rect(center=pos.pos)
     title_pos = title.get_rect(center=button_pos.center)

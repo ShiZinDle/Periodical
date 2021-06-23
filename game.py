@@ -3,7 +3,7 @@ from random import choice
 from typing import Callable, Dict, List, Optional, Tuple
 
 import pygame
-from pygame.locals import KEYDOWN, K_ESCAPE, QUIT  # type: ignore
+from pygame.constants import KEYDOWN, K_ESCAPE, QUIT
 from pygame.rect import Rect
 from pygame.surface import Surface
 
@@ -37,7 +37,8 @@ class Game:
             name: Name of player to add.
 
         Return:
-            True if successfull, False otherwise.'''
+            True if successfull, False otherwise.
+        '''
         if not self._status:
             self.names.append(name)
             return True
@@ -50,7 +51,8 @@ class Game:
             name: Name of player to remove.
 
         Return:
-            True if successfull, False otherwise.'''
+            True if successfull, False otherwise.
+        '''
         if not self._status:
             try:
                 self.names.remove(name)
@@ -194,7 +196,8 @@ class Game:
         '''Return a list of all cards the current player can interact with.
 
         Returns:
-            A list of all cards the current player can interact with.'''
+            A list of all cards the current player can interact with.
+        '''
         all_cards = []
         for deck in (self.general_market, self.light_market, self.heavy_market,
                      self.current_player.get_hand(),
@@ -211,7 +214,8 @@ class Game:
             pos: Mouse position.
 
         Returns:
-            Card with which mo8use collided, if exists.'''
+            Card with which mo8use collided, if exists.
+        '''
         for card in self._get_all_moveable_cards():
             if card.rect.collidepoint(pos):
                 return card
@@ -253,7 +257,8 @@ class Game:
             pos: Mouse position.
 
         Returns:
-            True if collision occurres, False otherwise.'''
+            True if collision occurres, False otherwise.
+        '''
         return bool(Rect(board.pos, board.size).collidepoint(*pos))
 
     def _validate_drag(self, pos: Tuple[int, int], card: Card) -> bool:
@@ -265,7 +270,8 @@ class Game:
             card: Card to be moved.
 
         Returns:
-            True if drag was successful, False otherwise.'''
+            True if drag was successful, False otherwise.
+        '''
         if card.zone in (Zone.GENERAL_MARKET, Zone.LIGHT_MARKET,
                          Zone.HEAVY_MARKET):
             if any(map(lambda x: self._validate_collide(x, pos),

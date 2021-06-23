@@ -127,7 +127,8 @@ class Player:
         '''Perform a mulligan.
 
         Returns:
-            True if successful, False otherwise.'''
+            True if successful, False otherwise.
+        '''
         if self.can_mulligan():
             self.end_turn()
             return True
@@ -143,7 +144,8 @@ class Player:
             card: card due to be removed from unused cards.
 
         Returns:
-            Actual card object to remove from unused cards.'''
+            Actual card object to remove from unused cards.
+        '''
         for other in self._unused:
             if card is other:
                 return card
@@ -180,7 +182,8 @@ class Player:
             reverse: Wether or not to reverse the proccess.
 
         Returns:
-            True if Successful, False otherwise.'''
+            True if Successful, False otherwise.
+        '''
         if reverse:
             if card in self._unused:
                 card = self._get_card_from_unused(card)
@@ -252,7 +255,8 @@ class Player:
             board: Board the cards will be printed on.
 
         Returns:
-            List of card image and location tuples to be printed.'''
+            List of card image and location tuples to be printed.
+        '''
         cards = []
         location = 12.5
         top = 15
@@ -277,7 +281,8 @@ class Player:
         printing to the screen.
 
         Returns:
-            Visualization of cards to be printed.'''
+            Visualization of cards to be printed.
+        '''
         cards = []
         location: NUM = SPACE
 
@@ -301,7 +306,8 @@ class Player:
         printing to the screen.
 
         Returns:
-            Visualization of cards to be printed.'''
+            Visualization of cards to be printed.
+        '''
         return self._show_vertical(self._table, TABLE)
 
     def show_discard(self) -> CARD_IMG:
@@ -309,7 +315,8 @@ class Player:
         the screen.
 
         Returns:
-            Visualization of cards to be printed.'''
+            Visualization of cards to be printed.
+        '''
         return self._show_vertical(self._discard, DISCARD)
 
     def show_lab(self) -> CARD_IMG:
@@ -317,14 +324,16 @@ class Player:
         screen.
 
         Returns:
-            Visualization of cards to be printed.'''
+            Visualization of cards to be printed.
+        '''
         return self._show_vertical(self._lab, LAB)
 
     def show_buttons(self, screen: Surface) -> None:
         '''Display relevant button on the screen.
 
         Args:
-            screen: Surface object onto which to paste images.'''
+            screen: Surface object onto which to paste images.
+        '''
         show_button(screen, 'End Turn', END_TURN, 'end_turn')
         if self.can_mulligan():
             show_button(screen, 'Mulligan', ENERGY, 'mulligan')
@@ -336,33 +345,38 @@ class Player:
         '''Add or remove card from hand.
         Args:
             card: Card to be added or removed.
-            add: Wether to add or remove card, defaults to removal.'''
+            add: Wether to add or remove card, defaults to removal.
+        '''
         interact_with(self._hand, card, add)
 
     def interact_with_discard(self, card: Card, add: bool = False) -> None:
         '''Add or remove card from discard.
         Args:
             card: Card to be added or removed.
-            add: Wether to add or remove card, defaults to removal.'''
+            add: Wether to add or remove card, defaults to removal.
+        '''
         interact_with(self._discard, card, add)
 
     def interact_with_table(self, card: Card, add: bool = False) -> None:
         '''Add or remove card from table.
         Args:
             card: Card to be added or removed.
-            add: Wether to add or remove card, defaults to removal.'''
+            add: Wether to add or remove card, defaults to removal.
+        '''
         interact_with(self._table, card, add)
 
     def interact_with_lab(self, card: Card, add: bool = False) -> None:
         '''Add or remove card from lab.
         Args:
             card: Card to be added or removed.
-            add: Wether to add or remove card, defaults to removal.'''
+            add: Wether to add or remove card, defaults to removal.
+        '''
         interact_with(self._lab, card, add)
 
     def interact_with_unused(self, card: Card, add: bool = False) -> None:
         '''Add or remove card from unused.
         Args:
             card: Card to be added or removed.
-            add: Wether to add or remove card, defaults to removal.'''
+            add: Wether to add or remove card, defaults to removal.
+        '''
         interact_with(self._unused, card, add)

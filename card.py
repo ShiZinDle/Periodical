@@ -42,7 +42,7 @@ class Card:
     def render(self) -> None:
         '''Create an image of the card for pygame visualization.'''
         self.rect = Rect((0, 0), CARD.size)
-        card = border_and_fill(CARD_BORDER, CARD, self.category)
+        card = border_and_fill(CARD, self.category, CARD_BORDER)
 
         center = card.get_rect().center
         centerx = card.get_rect().centerx
@@ -63,7 +63,7 @@ class Card:
         self.img = card
 
 
-def border_and_fill(width: int, size: Size, category: str) -> Surface:
+def border_and_fill(size: Size, category: str, width: int = 0) -> Surface:
     '''Return the backround border and color for a game object.
 
     Args:
@@ -73,7 +73,9 @@ def border_and_fill(width: int, size: Size, category: str) -> Surface:
 
     Returns:
         Background for a game object, colored and with outer border.
-        '''
+    '''
+    if width < 0:
+        width = 0
     border_size = border_width, border_height = width, width
     card = Surface(size.size).convert()
     background = Surface((size.width - border_width * 2,

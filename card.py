@@ -1,8 +1,10 @@
+from typing import List
 from pygame.rect import Rect
 from pygame.surface import Surface
 
 from periodical.config import (BLACK_FONT, CARD, CARD_BORDER, COLORS, FONT,
-                               Size, WHITE_FONT, Zone)
+                               MEGA_CARD, Size, SMALL_FONT, SMALLER_FONT,
+                               SMALLEST_FONT, WHITE_FONT, Zone)
 
 
 class Card:
@@ -17,13 +19,14 @@ class Card:
         zone: Card's current zone.
 
     '''
-    def __init__(self, name: str, symbol: str, number: int,
-                 mass: int, category: str, zone: Zone) -> None:
+    def __init__(self, name: str, symbol: str, number: int, mass: int,
+                 category: str, shells: List[int], zone: Zone) -> None:
         self.name = name.title()
         self.symbol = symbol.title()
         self.number = number
-        self.mass = mass
+        self.mass = round(mass)
         self.category = category.title()
+        self.shells = shells
         self.zone = zone
 
     def __eq__(self, other: object) -> bool:
@@ -58,6 +61,37 @@ class Card:
 
         for obj, pos in ((number, number_pos), (mass, mass_pos),
                          (symbol, symbol_pos)):
+            card.blit(obj, pos)
+
+        self.img = card
+
+    def mega_render(self) -> None:
+        '''Create a large image of the card for pygame visualization, including
+        extra information.'''
+        self.rect = Rect((0, 0), MEGA_CARD.size)
+        card = border_and_fill(MEGA_CARD, self.category, CARD_BORDER)
+
+        rect = card.get_rect()
+        row = {i: (rect.height / 6) * i for i in range(1, 7)}
+
+        names_font = SMALLER_FONT if len(self.name) >= 11 else SMALL_FONT
+        shells_font = SMALLEST_FONT if len(self.shells) >= 6 else SMALL_FONT
+
+        number = FONT.render(str(self.number), *BLACK_FONT)
+        number_pos = number.get_rect(centerx=rect.centerx, centery=row[1])
+        symbol = FONT.render(self.symbol, *BLACK_FONT)
+        symbol_pos = symbol.get_rect(centerx=rect.centerx, centery=row[2])
+        name = names_font.render(self.name, *BLACK_FONT)
+        name_pos = name.get_rect(centerx=rect.centerx, centery=row[3])
+        mass = SMALL_FONT.render(str(self.mass), *WHITE_FONT)
+        mass_pos = mass.get_rect(centerx=rect.centerx, centery=row[4])
+        shells = shells_font.render(
+            '-'.join([str(shell) for shell in self.shells]), *WHITE_FONT)
+        shells_pos = shells.get_rect(centerx=rect.centerx, centery=row[5])
+
+        for obj, pos in ((number, number_pos), (symbol, symbol_pos),
+                         (name, name_pos), (mass, mass_pos),
+                         (shells, shells_pos)):
             card.blit(obj, pos)
 
         self.img = card

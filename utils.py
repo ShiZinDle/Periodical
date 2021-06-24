@@ -21,8 +21,8 @@ def create_cards(elements: List[Dict[str, Any]],
         List of cards each depicting a unique element.
     '''
     return [Card(element['name'], element['symbol'], element['number'],
-                 round(element['atomic_mass']), element['category'],
-                 Zone.LIMBO)
+                 element['atomic_mass'], element['category'],
+                 element['shells'], Zone.LIMBO)
             for element in elements
             if first <= element['number'] <= last]
 

@@ -29,9 +29,9 @@ COLORS = {
     'Metalloid': (128, 55, 68),
     'Post Transition Metal': (108, 179, 212),
     'Transition Metal': (130, 10, 209),
-    'Lanthanide': (29, 49, 204),
+    'Lanthanide': (40, 61, 224),
     'Actinide': (204, 82, 0),
-    'Unknown': (181, 181, 181),
+    'Unknown': (150, 150, 150),
     'discard': (240, 81, 2),
     'hand': (92, 0, 92),
     'lab': (0, 245, 233),
@@ -67,11 +67,12 @@ class Board(Size, Pos):
 
 
 CARD = Size(width=75, height=100)
+MEGA_CARD = Size(width=CARD.width * 1.35, height=CARD.height * 1.35)
 SPACE = CARD.width / 5
 main_width = int(CARD.width * 5 + SPACE * 6)
 main_height = int(CARD.height * 2 + SPACE * 3)
 side_width = int(CARD.height + SPACE * 2)
-button_area_height = 100
+button_area_height = CARD.height
 SCREEN = Size(width=main_width + side_width * 3,
               height=main_height * 2 + button_area_height)
 LAB = Board(width=side_width, height=SCREEN.height, x=0, y=0)
@@ -86,9 +87,9 @@ DISCARD = Board(width=side_width, height=SCREEN.height,
 BUTTON_AREA = Board(width=main_width, height=button_area_height,
                     x=side_width, y=SCREEN.height - button_area_height)
 
-BUTTON = Size(width=200, height=50)
-button_height = SCREEN.height - 50
-button_space = 22
+BUTTON = Size(width=CARD.width * 2.5, height=CARD.height / 2)
+button_height = SCREEN.height - BUTTON.height
+button_space = (main_width - BUTTON.width * 2) / 3
 ENERGY = Pos(x=side_width + main_width - BUTTON.width / 2 - button_space,
              y=button_height)
 END_TURN = Pos(x=side_width + BUTTON.width / 2 + button_space,
@@ -98,6 +99,9 @@ BUTTON_BORDER = 5
 CARD_BORDER = 3
 
 FONT = Font(None, 36)
+SMALL_FONT = Font(None, 22)
+SMALLER_FONT = Font(None, 20)
+SMALLEST_FONT = Font(None, 17)
 BLACK_FONT = (True, (10, 10, 10))
 WHITE_FONT = (True, (245, 245, 245))
 

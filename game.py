@@ -207,14 +207,14 @@ class Game:
         return all_cards
 
     def _get_card_collision(self, pos: Tuple[int, int]) -> Optional[Card]:
-        '''Check for collision with cards, and return relevant card if
+        '''Check for mouse collision with cards, and return relevant card if
         collision occurres.
 
         Args:
             pos: Mouse position.
 
         Returns:
-            Card with which mo8use collided, if exists.
+            Card with which mouse collided, if exists.
         '''
         for card in self._get_all_moveable_cards():
             if card.rect.collidepoint(pos):

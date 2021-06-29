@@ -1,31 +1,34 @@
 from abc import ABC, abstractmethod
-from config import MEGA_CARD, Zone
-from card import Card
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import pygame
 from pygame.constants import KEYDOWN, K_ESCAPE, QUIT
 from pygame.font import Font
 from pygame.rect import Rect
+from pygame.surface import Surface
 
-from periodical.card import border_and_fill
-from periodical.config import BLACK_FONT, PATH, Size, SMALL_FONT, SMALLEST_FONT
+from periodical.card import border_and_fill, Card
+from periodical.config import (BLACK_FONT, Board, MEGA_CARD, NUM, PATH, Size,
+                               SMALL_FONT, SMALLER_FONT, SMALLEST_FONT,
+                               WHITE_FONT, Zone)
 from periodical.utils import get_element_info
 
 
 CELL = Size(width=40, height=50)
+SHELL = Size(width=CELL.width, height=80)
 AROUND = 10
 BORDER = 1
 GROUPS = 18
+ADDITIONAL_GROUPS = 14
 PERIODS = 10
-TABLE = Size(
-    width=(CELL.width - BORDER) * (GROUPS - 1) + CELL.width + AROUND,
-    height=(CELL.height - BORDER) * (PERIODS - 1) + CELL.height + AROUND)
+ADDITIONAL_PERIODS = 3
 FONT = Font(None, 24)
 MAX_NUM_RANGE = 5
 CARD_COL = 7
-CARD_POS = ((CELL.width - BORDER) * (CARD_COL - 1.5) + CELL.width
-            - MEGA_CARD.width / 2 + AROUND / 2, AROUND)
+CARD_COL_ADDITION = 2
+BUTTON_GROUP = 12
+LANTHANIDES = 57, 71, 3, 6, 'lanthanide'
+ACTINIDES = 89, 103, 3, 7, 'actinide'
 
 
 class Cell(ABC):
@@ -41,32 +44,52 @@ class Cell(ABC):
         self.period = period - 1
         self.category = category.title()
 
-    def position(self) -> None:
-        '''Return position of cell on the periodic table.
+    def get_rect(self, shells: bool) -> Rect:
+        '''Return a Rect object containing the size and position of the cell on
+        the periodic table.
+
+        Args:
+            shells: Determines the size of the cells on the table, and their
+                    corresponding position.
 
         Returns:
-            Position of cell on the periodic table.
+            Rect object containing the size and position of the cell on the
+            periodic table.
         '''
+        size, group, period = CELL, self.group, self.period
+        if shells:
+            size = SHELL
+            if period > 7:
+                period -= 3
+            elif group > 2:
+                group += 14
         addition = AROUND / 2
         x_addition = y_addition = 0
         if self.group != 0:
             x_addition = BORDER
         if self.period != 0:
             y_addition = BORDER
-        self.rect = Rect((int((CELL.width - x_addition) * (self.group)
-                              + addition),
-                         int((CELL.height - y_addition) * (self.period)
-                             + addition)),
-                         CELL.size)
+
+        return Rect((int((size.width - x_addition) * (group)
+                         + addition),
+                     int((size.height - y_addition) * (period)
+                         + addition)),
+                    size.size)
 
     @abstractmethod
-    def show(self) -> None: pass
+    def show(self) -> Surface: pass
     '''Return an image of the cell to be printed to the screen.'''
+
+    @abstractmethod
+    def show_shells(self) -> Surface: pass
+    '''Return a large image of the cell to be printed to the screen.'''
 
     def render(self) -> None:
         '''Create cell image and get its target position.'''
-        self.show()
-        self.position()
+        self.img = self.show()
+        self.shell_img = self.show_shells()
+        self.pos = self.get_rect(False)
+        self.shell_pos = self.get_rect(True)
 
 
 class Element(Cell):
@@ -76,6 +99,7 @@ class Element(Cell):
         name: Element's name.
         symbol: Element's symbol.
         number: Element's atomic number.
+        card: Card representation of element.
         group: Element's group.
         period: Element's period.
         category: Element's categorical classification.
@@ -90,7 +114,12 @@ class Element(Cell):
         self.card = Card(name, symbol, number, mass,
                          category, shells, Zone.LIMBO)
 
-    def show(self) -> None:
+    def show(self) -> Surface:
+        '''Return an image of the element to be printed to the screen.
+
+        Returns:
+            Image of the element to be printed to the screen.
+        '''
         element = border_and_fill(CELL, self.category, BORDER)
         centerx = element.get_rect().centerx
         number = FONT.render(self.number, *BLACK_FONT)
@@ -103,7 +132,28 @@ class Element(Cell):
         for img, pos in ((number, number_pos), (symbol, symbol_pos)):
             element.blit(img, pos)
 
-        self.img = element
+        return element
+
+    def show_shells(self) -> Surface:
+        '''Return a large image of the element to be printed to the screen.
+
+        Returns:
+            Large image of the element to be printed to the screen.
+        '''
+        element = border_and_fill(SHELL, self.category, BORDER)
+        shells = self.card.shells
+        length = len(shells) + 2
+        rect = element.get_rect()
+        row = {i: (rect.height / length) * i for i in range(1, length)}
+        number = SMALLER_FONT.render(str(self.number), *WHITE_FONT)
+        num_pos = number.get_rect(centerx=rect.centerx, centery=row[1])
+        element.blit(number, num_pos)
+        for i, shell in enumerate(shells, start=2):
+            text = SMALLEST_FONT.render(str(shell), *BLACK_FONT)
+            pos = text.get_rect(centerx=rect.centerx, centery=row[i])
+            element.blit(text, pos)
+
+        return element
 
 
 class ElementGroup(Cell):
@@ -122,8 +172,16 @@ class ElementGroup(Cell):
         self.first = first
         self.last = last
 
-    def show(self) -> None:
-        group = border_and_fill(CELL, self.category, BORDER)
+    def show(self, size: Size = CELL) -> Surface:
+        '''Return an image of the cell to be printed to the screen.
+
+        Args:
+            size: Cell's size.
+
+        Returns:
+            Image of the cell to be printed to the screen.
+        '''
+        group = border_and_fill(size, self.category, BORDER)
         font = SMALL_FONT
         num_range = f'{self.first}-{self.last}'
         if len(num_range) > MAX_NUM_RANGE:
@@ -133,19 +191,25 @@ class ElementGroup(Cell):
 
         group.blit(number, number_pos)
 
-        self.img = group
+        return group
+
+    def show_shells(self) -> Surface:
+        '''Return a large image of the cell to be printed to the screen.
+
+        Returns:
+            Large image of the element to be printed to the screen.
+        '''
+        return self.show(SHELL)
 
 
 def create_elements(elements: List[Dict[str, Any]]) -> List[Element]:
-    '''Return list of cards based on the passed elements and the given range.
+    '''Return list of cells based on the passed element details.
 
     Args:
         elements: Complete details of each element.
-        first: Number of first element to create a card for.
-        last: Number of last element to create a card for.
 
     Returns:
-        List of cards each depicting a unique element.
+        List of cells each depicting a unique element.
     '''
     return [Element(element['name'], element['symbol'], element['number'],
                     element['xpos'], element['ypos'], element['category'],
@@ -153,11 +217,111 @@ def create_elements(elements: List[Dict[str, Any]]) -> List[Element]:
             for element in elements]
 
 
-def get_element_collision(elements: List[Cell],
-                          pos: Tuple[int, int]) -> Element:
-    for element in elements:
-        if element.rect.collidepoint(pos):
-            return element
+def get_element_collision(cells: List[Cell], pos: Tuple[int, int],
+                          shells: bool) -> Optional[Element]:
+    '''Check for mouse collision with cells and return relevant cell if
+    collision occurres.
+
+    Args:
+        cells: List of all cells.
+        pos: Mouse position.
+        shells: Determines the size of the cells on the table, and their
+                corresponding position.
+
+    Returns:
+        Cell with which mouse collided, if exists.
+    '''
+    for cell in cells:
+        if isinstance(cell, Element):
+            if shells:
+                rect = cell.shell_pos
+            else:
+                rect = cell.pos
+            if rect.collidepoint(pos):
+                return cell
+    return None
+
+
+def get_screen(shells: bool) -> Surface:
+    '''Return surface object representing the screen.
+
+    Args:
+        shells: Determines the size of the cells on the table, and their
+                corresponding position.
+
+    Returns:
+        Surface object representing the screen.
+    '''
+    size, groups, periods = CELL, GROUPS, PERIODS
+
+    if shells:
+        size = SHELL
+        groups += ADDITIONAL_GROUPS
+        periods -= ADDITIONAL_PERIODS
+    screen = pygame.display.set_mode((
+        ((size.width - BORDER) * (groups - 1) + size.width  # type: ignore
+         + AROUND),
+        (size.height - BORDER) * (periods - 1) + size.height + AROUND))
+    screen.fill((250, 250, 250))
+    return screen
+
+
+def get_button(shells: bool) -> Board:
+    '''Return button size and position.
+
+    Args:
+        shells: Determines the size of the cells on the table, and their
+                corresponding position.
+
+    Returns:
+        Button size and position.
+    '''
+    size, pos = CELL, BUTTON_GROUP
+    if shells:
+        size = SHELL
+        pos += ADDITIONAL_GROUPS
+    return Board(width=size.width * 4 - BORDER * 3, height=size.height,
+                 x=int((size.width - BORDER) * pos + AROUND / 2), y=AROUND / 2)
+
+
+def show_mode_button(screen: Surface, shells: bool) -> None:
+    '''Create mode changing button and paste it to the screen.
+
+    Args:
+        screen: Surface object onto which to paste the button.
+        shells: Determines the size of the cells on the table, and their
+                corresponding position.
+    '''
+    if shells:
+        message = 'VIEW ELEMENT DETAILS'
+    else:
+        message = 'VIEW VALANCE SHELLS'
+    button = border_and_fill(get_button(shells), 'mulligan', BORDER)
+    text = Font(None, 18).render(message, *BLACK_FONT)
+    text_pos = text.get_rect(center=button.get_rect().center)
+    button.blit(text, text_pos)
+    button_size = get_button(shells)
+    button_pos = button.get_rect(left=button_size.x, top=button_size.y)
+    screen.blit(button, button_pos)
+
+
+def get_mega_card_pos(shells: bool) -> Tuple[NUM, NUM]:
+    '''Return position of large card, showing extra details on the element.
+
+    Args:
+        shells: Determines the size of the cells on the table, and their
+                corresponding position.
+
+    Returns:
+        Large detailed card's position on the screen.
+    '''
+    col = CARD_COL
+    row: NUM = AROUND
+    if shells:
+        col += CARD_COL_ADDITION
+        row += SHELL.height * 1.5
+    return ((CELL.width - BORDER) * (col - 1.5) + CELL.width
+            - MEGA_CARD.width / 2 + AROUND / 2, row)
 
 
 def show_table(cells: List[Cell]) -> None:
@@ -166,8 +330,8 @@ def show_table(cells: List[Cell]) -> None:
     Args:
         cells: Details of all cells to print.
     '''
-    screen = pygame.display.set_mode(TABLE.size)  # type: ignore
-    screen.fill((250, 250, 250))
+    shells = False
+    screen = get_screen(shells)
     pygame.display.set_caption('Periodical')
 
     for cell in cells:
@@ -181,20 +345,34 @@ def show_table(cells: List[Cell]) -> None:
 
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:
-                    element = get_element_collision(cells, event.pos)
-                    if hasattr(element, 'card'):
+                    button = get_button(shells)
+                    if Rect(button.pos, button.size).collidepoint(event.pos):
+                        if shells:
+                            shells = False
+                            screen = get_screen(shells)
+                        else:
+                            shells = True
+                            screen = get_screen(shells)
+                    element = get_element_collision(cells, event.pos, shells)
+                    if element:
                         element.card.mega_render()
-                        screen.blit(element.card.img, CARD_POS)
+                        screen.blit(element.card.img,
+                                    get_mega_card_pos(shells))
 
         for cell in cells:
-            screen.blit(cell.img, cell.rect)
+            img, pos = cell.img, cell.pos
+            if shells:
+                img = cell.shell_img
+                pos = cell.shell_pos
+            screen.blit(img, pos)
 
+        show_mode_button(screen, shells)
         pygame.display.flip()
 
 
 if __name__ == '__main__':
     elements: List[Cell] = []
     elements.extend(create_elements(get_element_info(PATH)[:-1]))
-    elements.append(ElementGroup(57, 71, 3, 6, 'lanthanide'))
-    elements.append(ElementGroup(89, 103, 3, 7, 'actinide'))
+    elements.append(ElementGroup(*LANTHANIDES))
+    elements.append(ElementGroup(*ACTINIDES))
     show_table(elements)

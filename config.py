@@ -39,8 +39,8 @@ COLORS = {
     'table': (230, 7, 14),
     'button_area': (138, 0, 96),
     'end_turn': (150, 0, 20),
-    'mulligan': (19, 0, 166),
-    'energy': (99, 255, 182),
+    'mulligan': (76, 189, 237),
+    'energy': (49, 224, 142),
 }
 
 

@@ -217,7 +217,7 @@ def create_elements(elements: List[Dict[str, Any]]) -> List[Element]:
             for element in elements]
 
 
-def get_element_collision(cells: List[Cell], pos: Tuple[int, int],
+def get_element_collision(cells: List[Element], pos: Tuple[int, int],
                           shells: bool) -> Optional[Element]:
     """Checks for mouse collision with cells and returns relevant cell if
     collision occurres.
@@ -324,7 +324,7 @@ def get_mega_card_pos(shells: bool) -> Tuple[NUM, NUM]:
             - MEGA_CARD.width / 2 + AROUND / 2, row)
 
 
-def show_table(cells: List[Cell]) -> None:
+def show_table(elements: List[Element], groups: List[ElementGroup]) -> None:
     """Prints an image of the periodic table to the screen.
 
     Args:
@@ -334,8 +334,9 @@ def show_table(cells: List[Cell]) -> None:
     screen = get_screen(shells)
     pygame.display.set_caption('Periodical')
 
-    for cell in cells:
-        cell.render()
+    for seq in (elements, groups):
+        for cell in seq:  # type: ignore
+            cell.render()
 
     while True:
         for event in pygame.event.get():
@@ -353,12 +354,17 @@ def show_table(cells: List[Cell]) -> None:
                         else:
                             shells = True
                             screen = get_screen(shells)
-                    element = get_element_collision(cells, event.pos, shells)
+                    element = get_element_collision(elements, event.pos,
+                                                    shells)
                     if element:
                         element.card.mega_render()
                         screen.blit(element.card.img,
                                     get_mega_card_pos(shells))
 
+        cells: List[Cell] = []
+        cells.extend(elements)
+        if not shells:
+            cells.extend(groups)
         for cell in cells:
             img, pos = cell.img, cell.pos
             if shells:
@@ -371,8 +377,6 @@ def show_table(cells: List[Cell]) -> None:
 
 
 if __name__ == '__main__':
-    elements: List[Cell] = []
-    elements.extend(create_elements(get_element_info(PATH)[:-1]))
-    elements.append(ElementGroup(*LANTHANIDES))
-    elements.append(ElementGroup(*ACTINIDES))
-    show_table(elements)
+    elements = create_elements(get_element_info(PATH)[:-1])
+    groups = [ElementGroup(*LANTHANIDES), ElementGroup(*ACTINIDES)]
+    show_table(elements, groups)

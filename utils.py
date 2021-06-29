@@ -10,7 +10,7 @@ from periodical.config import (BLACK_FONT, BUTTON, BUTTON_BORDER, CARD,
 
 def create_cards(elements: List[Dict[str, Any]],
                  first: int, last: int) -> List[Card]:
-    '''Return list of cards based on the passed elements and the given range.
+    """Returns list of cards based on the passed elements and the given range.
 
     Args:
         elements: Complete details of each element.
@@ -19,7 +19,7 @@ def create_cards(elements: List[Dict[str, Any]],
 
     Returns:
         List of cards each depicting a unique element.
-    '''
+    """
     return [Card(element['name'], element['symbol'], element['number'],
                  element['atomic_mass'], element['category'],
                  element['shells'], Zone.LIMBO)
@@ -28,14 +28,14 @@ def create_cards(elements: List[Dict[str, Any]],
 
 
 def get_element_info(path: str) -> Any:
-    '''Extract element info from json file.
+    """Extracts element info from json file.
 
     Args:
         path: Path to json file.
 
     Returns:
         Complete details of each element.
-    '''
+    """
     with open(path, 'r', encoding='utf-8') as file_handler:
         file = file_handler.read()
     return json.loads(file)['elements']
@@ -43,7 +43,7 @@ def get_element_info(path: str) -> Any:
 
 def generate_cards(*, first: Optional[int] = None,
                    last: Optional[int] = None) -> List[Card]:
-    '''Return list of Card objects based on range.
+    """Returns list of Card objects based on range.
 
     Args:
         first: Number of first element to create a card for.
@@ -51,7 +51,7 @@ def generate_cards(*, first: Optional[int] = None,
 
     Returns:
         List of cards each depicting a unique element.
-    '''
+    """
     if not first:
         first = 1
     if not last:
@@ -61,7 +61,7 @@ def generate_cards(*, first: Optional[int] = None,
 
 
 def interact_with(deck: List[Card], card: Card, add: bool = False) -> None:
-    '''Add or remove card from the deck.
+    """Adds or removes card from the deck.
 
     identity comparison is used to ensure removal of desired card and not one
     with equal values.
@@ -70,7 +70,7 @@ def interact_with(deck: List[Card], card: Card, add: bool = False) -> None:
         deck: List of cards to interact with.
         card: Object to add or remove.
         add: Whether to add or remove the card.
-    '''
+    """
     if add:
         deck.append(card)
     else:
@@ -80,38 +80,38 @@ def interact_with(deck: List[Card], card: Card, add: bool = False) -> None:
 
 
 def move_zone(deck: List[Card], zone: Zone) -> None:
-    '''Change `zone` attribute value for all cards in deck.
+    """Changes `zone` attribute value for all cards in deck.
 
     Args:
         deck: List of cards to apply changes to.
         zone: New zone of cards.
-    '''
+    """
     for card in deck:
         card.zone = zone
 
 
 def calc_surface_heights(height: NUM) -> Tuple[NUM, NUM]:
-    '''return y pos of top and bottom card rows for a game zone.
+    """returns y pos of top and bottom card rows for a game zone.
 
     Args:
         height: Board height to calculate row positions for.
 
     Returns:
         Position of top and bottom row in the game zone.
-    '''
+    """
     return ((height / 2 - CARD.height) / 2,
             (height * 2 - CARD.height) / 3)
 
 
 def show_button(screen: Surface, text: str, pos: Pos, name: str) -> None:
-    '''Paste a button image onto the game screen.
+    """Pastes a button image onto the game screen.
 
     Args:
         screen: Surface object onto which to paste images.
         text: Button's text.
         pos: Button's position on the screen.
         name: Name of button for coloring purposes.
-    '''
+    """
     button = border_and_fill(BUTTON, name, BUTTON_BORDER)
     title = FONT.render(text, *BLACK_FONT)
     button_pos = button.get_rect(center=pos.pos)

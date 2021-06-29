@@ -8,7 +8,7 @@ from periodical.utils import generate_cards, move_zone
 
 
 class Deck(ABC):
-    '''A class for representing a deck of cards.'''
+    """A class for representing a deck of cards."""
     def __init__(self, zone: Zone, *cards: Card,  **kwargs: Any) -> None:
         super().__init__(**kwargs)  # type: ignore
         self._cards = list(cards)
@@ -26,25 +26,25 @@ class Deck(ABC):
         return sorted(self._cards) == sorted(other._cards)
 
     def draw(self) -> Optional[Card]:
-        '''Draw a card from the deck, if possible.'''
+        """Draws a card from the deck, if possible."""
         try:
             return self._cards.pop(0)
         except IndexError:
             return None
 
     def shuffle(self) -> None:
-        '''Randomize the order of cards in the deck.'''
+        """Randomizes the order of cards in the deck."""
         shuffle(self._cards)
 
 
 class StartingDeck(Deck):
-    '''A class for representing a player's starting deck of cards.'''
+    """A class for representing a player's starting deck of cards."""
     def __init__(self, **kwargs: Any) -> None:
         super().__init__(Zone.PLAYER_DECK, *generate_cards(last=10), **kwargs)
 
 
 class MarketDeck(Deck):
-    '''A class for representing a communal market deck of cards.'''
+    """A class for representing a communal market deck of cards."""
     def __init__(self, amount: int, zone: Zone, *,
                  first: int = 1, last: int = ELEMENTS_AMOUNT,
                  **kwargs: Any) -> None:

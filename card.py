@@ -8,7 +8,7 @@ from periodical.config import (BLACK_FONT, CARD, CARD_BORDER, COLORS, FONT,
 
 
 class Card:
-    '''A class for representing card of elements of the periodic table.
+    """A class for representing card of elements of the periodic table.
 
     Attributes:
         name: Element's name.
@@ -17,8 +17,7 @@ class Card:
         mass: Element's rounded atomic mass.
         category: Element's categorical classification.
         zone: Card's current zone.
-
-    '''
+    """
     def __init__(self, name: str, symbol: str, number: int, mass: int,
                  category: str, shells: List[int], zone: Zone) -> None:
         self.name = name.title()
@@ -43,7 +42,7 @@ class Card:
         return self.number > other.number
 
     def render(self) -> None:
-        '''Create an image of the card for pygame visualization.'''
+        """Creates an image of the card for pygame visualization."""
         self.rect = Rect((0, 0), CARD.size)
         card = border_and_fill(CARD, self.category, CARD_BORDER)
 
@@ -66,8 +65,8 @@ class Card:
         self.img = card
 
     def mega_render(self) -> None:
-        '''Create a large image of the card for pygame visualization, including
-        extra information.'''
+        """Creates a large image of the card for pygame visualization,
+        including extra information."""
         self.rect = Rect((0, 0), MEGA_CARD.size)
         card = border_and_fill(MEGA_CARD, self.category, CARD_BORDER)
 
@@ -98,7 +97,7 @@ class Card:
 
 
 def border_and_fill(size: Size, category: str, width: int = 0) -> Surface:
-    '''Return the backround border and color for a game object.
+    """Returns the backround surface for a game object bordered and colored.
 
     Args:
         width: Outer border's size.
@@ -107,7 +106,7 @@ def border_and_fill(size: Size, category: str, width: int = 0) -> Surface:
 
     Returns:
         Background for a game object, colored and with outer border.
-    '''
+    """
     if width < 0:
         width = 0
     border_size = border_width, border_height = width, width

@@ -45,6 +45,13 @@ COLORS = {
 
 
 class Size:
+    """A class for representing the size of a rectangle.
+
+    Attributes:
+        width: Rectangle's width.
+        height: Rectangle's height.
+        size: Rectangle's width and height.
+    """
     def __init__(self, width: Union[int, float], height: Union[int, float],
                  **kwargs: Any) -> None:
         super().__init__(**kwargs)  # type: ignore
@@ -54,6 +61,13 @@ class Size:
 
 
 class Pos:
+    """A class for representing the position of a rectangle on a surface.
+
+    Attributes:
+        x: Rectangle's x position.
+        y: Rectangle's y position.
+        pos: Rectangle's x and y positions.
+    """
     def __init__(self, x: Union[int, float], y: Union[int, float],
                  **kwargs: Any) -> None:
         super().__init__(**kwargs)  # type: ignore
@@ -63,6 +77,8 @@ class Pos:
 
 
 class Board(Size, Pos):
+    """A class for representing the size of a rectangle and its position on a
+    surface."""
     pass
 
 
@@ -107,6 +123,7 @@ WHITE_FONT = (True, (245, 245, 245))
 
 
 class Zone(Enum):
+    """A class for card location indication."""
     LIMBO = 0
     PLAYER_DECK = 1
     HAND = 2

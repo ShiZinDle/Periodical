@@ -32,21 +32,21 @@ ACTINIDES = 89, 103, 3, 7, 'actinide'
 
 
 class Cell(ABC):
-    '''A class for representing a cell of the periodic table.
+    """A class for representing a cell of the periodic table.
 
     Attributes:
         group: Element's group.
         period: Element's period.
         category: Element's categorical classification.
-    '''
+    """
     def __init__(self, group: int, period: int, category: str) -> None:
         self.group = group - 1
         self.period = period - 1
         self.category = category.title()
 
     def get_rect(self, shells: bool) -> Rect:
-        '''Return a Rect object containing the size and position of the cell on
-        the periodic table.
+        """Returns a Rect object containing the size and position of the cell
+        on the periodic table.
 
         Args:
             shells: Determines the size of the cells on the table, and their
@@ -55,7 +55,7 @@ class Cell(ABC):
         Returns:
             Rect object containing the size and position of the cell on the
             periodic table.
-        '''
+        """
         size, group, period = CELL, self.group, self.period
         if shells:
             size = SHELL
@@ -78,14 +78,14 @@ class Cell(ABC):
 
     @abstractmethod
     def show(self) -> Surface: pass
-    '''Return an image of the cell to be printed to the screen.'''
+    """Returns an image of the cell to be printed to the screen."""
 
     @abstractmethod
     def show_shells(self) -> Surface: pass
-    '''Return a large image of the cell to be printed to the screen.'''
+    """Returns a large image of the cell to be printed to the screen."""
 
     def render(self) -> None:
-        '''Create cell image and get its target position.'''
+        """Create cell image and get its target position."""
         self.img = self.show()
         self.shell_img = self.show_shells()
         self.pos = self.get_rect(False)
@@ -93,7 +93,7 @@ class Cell(ABC):
 
 
 class Element(Cell):
-    '''A class for representing an element of the periodic table.
+    """A class for representing an element of the periodic table.
 
     Attributes:
         name: Element's name.
@@ -103,7 +103,7 @@ class Element(Cell):
         group: Element's group.
         period: Element's period.
         category: Element's categorical classification.
-    '''
+    """
     def __init__(self, name: str, symbol: str, number: int, group: int,
                  period: int, category: str, mass: int,
                  shells: List[int]) -> None:
@@ -115,11 +115,11 @@ class Element(Cell):
                          category, shells, Zone.LIMBO)
 
     def show(self) -> Surface:
-        '''Return an image of the element to be printed to the screen.
+        """Returns an image of the element to be printed to the screen.
 
         Returns:
             Image of the element to be printed to the screen.
-        '''
+        """
         element = border_and_fill(CELL, self.category, BORDER)
         centerx = element.get_rect().centerx
         number = FONT.render(self.number, *BLACK_FONT)
@@ -135,11 +135,11 @@ class Element(Cell):
         return element
 
     def show_shells(self) -> Surface:
-        '''Return a large image of the element to be printed to the screen.
+        """Returns a large image of the element to be printed to the screen.
 
         Returns:
             Large image of the element to be printed to the screen.
-        '''
+        """
         element = border_and_fill(SHELL, self.category, BORDER)
         shells = self.card.shells
         length = len(shells) + 2
@@ -157,7 +157,7 @@ class Element(Cell):
 
 
 class ElementGroup(Cell):
-    '''A class for representing a group of elements of the periodic table.
+    """A class for representing a group of elements of the periodic table.
 
     Attributes:
         first: Atomic number of first element in group.
@@ -165,7 +165,7 @@ class ElementGroup(Cell):
         group: Element group's group (column) on the periodic table.
         period: Element group's period.
         category: Element group's categorical classification.
-    '''
+    """
     def __init__(self, first: int, last: int, group: int, period: int,
                  category: str) -> None:
         super().__init__(group, period, category)
@@ -173,14 +173,14 @@ class ElementGroup(Cell):
         self.last = last
 
     def show(self, size: Size = CELL) -> Surface:
-        '''Return an image of the cell to be printed to the screen.
+        """Returns an image of the cell to be printed to the screen.
 
         Args:
             size: Cell's size.
 
         Returns:
             Image of the cell to be printed to the screen.
-        '''
+        """
         group = border_and_fill(size, self.category, BORDER)
         font = SMALL_FONT
         num_range = f'{self.first}-{self.last}'
@@ -194,23 +194,23 @@ class ElementGroup(Cell):
         return group
 
     def show_shells(self) -> Surface:
-        '''Return a large image of the cell to be printed to the screen.
+        """Returns a large image of the cell to be printed to the screen.
 
         Returns:
             Large image of the element to be printed to the screen.
-        '''
+        """
         return self.show(SHELL)
 
 
 def create_elements(elements: List[Dict[str, Any]]) -> List[Element]:
-    '''Return list of cells based on the passed element details.
+    """Returns list of cells based on the passed element details.
 
     Args:
         elements: Complete details of each element.
 
     Returns:
         List of cells each depicting a unique element.
-    '''
+    """
     return [Element(element['name'], element['symbol'], element['number'],
                     element['xpos'], element['ypos'], element['category'],
                     element['atomic_mass'], element['shells'])
@@ -219,7 +219,7 @@ def create_elements(elements: List[Dict[str, Any]]) -> List[Element]:
 
 def get_element_collision(cells: List[Cell], pos: Tuple[int, int],
                           shells: bool) -> Optional[Element]:
-    '''Check for mouse collision with cells and return relevant cell if
+    """Checks for mouse collision with cells and returns relevant cell if
     collision occurres.
 
     Args:
@@ -230,7 +230,7 @@ def get_element_collision(cells: List[Cell], pos: Tuple[int, int],
 
     Returns:
         Cell with which mouse collided, if exists.
-    '''
+    """
     for cell in cells:
         if isinstance(cell, Element):
             if shells:
@@ -243,7 +243,7 @@ def get_element_collision(cells: List[Cell], pos: Tuple[int, int],
 
 
 def get_screen(shells: bool) -> Surface:
-    '''Return surface object representing the screen.
+    """Returns surface object representing the screen.
 
     Args:
         shells: Determines the size of the cells on the table, and their
@@ -251,7 +251,7 @@ def get_screen(shells: bool) -> Surface:
 
     Returns:
         Surface object representing the screen.
-    '''
+    """
     size, groups, periods = CELL, GROUPS, PERIODS
 
     if shells:
@@ -267,7 +267,7 @@ def get_screen(shells: bool) -> Surface:
 
 
 def get_button(shells: bool) -> Board:
-    '''Return button size and position.
+    """Returns button size and position.
 
     Args:
         shells: Determines the size of the cells on the table, and their
@@ -275,7 +275,7 @@ def get_button(shells: bool) -> Board:
 
     Returns:
         Button size and position.
-    '''
+    """
     size, pos = CELL, BUTTON_GROUP
     if shells:
         size = SHELL
@@ -285,13 +285,13 @@ def get_button(shells: bool) -> Board:
 
 
 def show_mode_button(screen: Surface, shells: bool) -> None:
-    '''Create mode changing button and paste it to the screen.
+    """Creates mode changing button and pastes it to the screen.
 
     Args:
         screen: Surface object onto which to paste the button.
         shells: Determines the size of the cells on the table, and their
                 corresponding position.
-    '''
+    """
     if shells:
         message = 'VIEW ELEMENT DETAILS'
     else:
@@ -306,7 +306,7 @@ def show_mode_button(screen: Surface, shells: bool) -> None:
 
 
 def get_mega_card_pos(shells: bool) -> Tuple[NUM, NUM]:
-    '''Return position of large card, showing extra details on the element.
+    """Returns position of large card, showing extra details on the element.
 
     Args:
         shells: Determines the size of the cells on the table, and their
@@ -314,7 +314,7 @@ def get_mega_card_pos(shells: bool) -> Tuple[NUM, NUM]:
 
     Returns:
         Large detailed card's position on the screen.
-    '''
+    """
     col = CARD_COL
     row: NUM = AROUND
     if shells:
@@ -325,11 +325,11 @@ def get_mega_card_pos(shells: bool) -> Tuple[NUM, NUM]:
 
 
 def show_table(cells: List[Cell]) -> None:
-    '''Print an image of the periodic table to the screen.
+    """Prints an image of the periodic table to the screen.
 
     Args:
         cells: Details of all cells to print.
-    '''
+    """
     shells = False
     screen = get_screen(shells)
     pygame.display.set_caption('Periodical')
